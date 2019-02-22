@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 imports:
-  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/mtangaro/custom_types.yaml
 
 description: >
   TOSCA test for launching a myFAIR portal, with seek platform and Galaxy.
@@ -40,11 +40,14 @@ topology_template:
               http_port:
                 protocol: tcp
                 source: 80
+              seek_port:
+                protocol: tcp
+                source: 8890
         # Host container properties
         host:
          properties:
-           num_cpus: { get_input: number_cpus }
-           mem_size: { get_input: memory_size }
+           num_cpus: { get_input: seek_ncpus }
+           mem_size: { get_input: seek_mem_size }
         # Guest Operating System properties
         os:
           properties:
@@ -52,4 +55,6 @@ topology_template:
 
   outputs:
     seek_url:
-      value: { concat: [ 'http://', get_attribute: [ seek_server, public_address, 0 ], '/galaxy' ] }
+      value: { concat: [ 'http://', get_attribute: [ seek_server, public_address, 0 ] ] }
+    seek_creds:
+      value: { get_attribute: [ seek_server, endpoint, credential, 0 ] }
